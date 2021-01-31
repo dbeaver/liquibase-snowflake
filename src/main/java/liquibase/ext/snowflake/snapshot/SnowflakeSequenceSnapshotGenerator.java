@@ -1,5 +1,7 @@
 package liquibase.ext.snowflake.snapshot;
 
+import java.util.Locale;
+
 import liquibase.database.Database;
 import liquibase.ext.snowflake.database.SnowflakeDatabase;
 import liquibase.snapshot.SnapshotGenerator;
@@ -11,11 +13,11 @@ public class SnowflakeSequenceSnapshotGenerator extends SequenceSnapshotGenerato
 
     @Override
     public int getPriority(Class<? extends DatabaseObject> objectType, Database database) {
-        int priority = super.getPriority(objectType, database);
         if (database instanceof SnowflakeDatabase) {
-            priority += PRIORITY_DATABASE;
+        	int priority = super.getPriority(objectType, database);
+            return priority += PRIORITY_DATABASE;
         }
-        return priority;
+        return PRIORITY_NONE;
     }
 
     @Override
@@ -25,12 +27,19 @@ public class SnowflakeSequenceSnapshotGenerator extends SequenceSnapshotGenerato
 
     @Override
     protected String getSelectSequenceSql(Schema schema, Database database) {
-        if (database instanceof SnowflakeDatabase) {
-            return "SHOW SEQUENCES IN " + database.getDefaultCatalogName().toUpperCase() + "." + database.getDefaultSchemaName().toUpperCase();
+    	if (database instanceof SnowflakeDatabase) {
+       	 return "SELECT\n" +
+                    "SEQUENCE_NAME,\n" +
+                    "START_VALUE,\n" +
+                    "\"INCREMENT\" AS INCREMENT_BY,\n" +
+                    "CYCLE_OPTION AS WILL_CYCLE\n" +
+                    "FROM\n" + "\"" + schema.getCatalogName().toUpperCase(Locale.ENGLISH) + "\"." +
+                    "INFORMATION_SCHEMA.\"SEQUENCES\" s\n" +
+                    "WHERE\n" +
+                    "s.SEQUENCE_SCHEMA ='" + schema.getName() + "'";
         }
-
+    	
         return super.getSelectSequenceSql(schema, database);
-
     }
 
 }
