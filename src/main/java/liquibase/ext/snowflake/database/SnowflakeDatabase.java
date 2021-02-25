@@ -6,8 +6,6 @@ import liquibase.database.AbstractJdbcDatabase;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.DatabaseException;
-import liquibase.logging.LogFactory;
-import liquibase.logging.Logger;
 import liquibase.structure.DatabaseObject;
 
 import java.math.BigInteger;
@@ -25,7 +23,7 @@ public class SnowflakeDatabase extends AbstractJdbcDatabase {
     public SnowflakeDatabase() {
         super.setCurrentDateTimeFunction("current_timestamp::timestamp_ntz");
         super.unmodifiableDataTypes.addAll(Arrays.asList("integer", "bool", "boolean", "int4", "int8", "float4", "float8", "numeric", "bigserial", "serial", "bytea", "timestamptz"));
-        super.unquotedObjectsAreUppercased = false;
+        super.unquotedObjectsAreUppercased = true;
         super.addReservedWords(getDefaultReservedWords());
     }
 
