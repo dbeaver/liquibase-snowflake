@@ -29,8 +29,7 @@ public class SnowflakeSchemaSnapshotGenerator extends SchemaSnapshotGenerator {
 
         ResultSet schemas = null;
         try {
-            schemas = ((JdbcConnection) database.getConnection()).getMetaData().getSchemas(database
-                    .getDefaultCatalogName(), database.getDefaultSchemaName());
+            schemas = ((JdbcConnection) database.getConnection()).getMetaData().getSchemas(database.getDefaultCatalogName(), null);
             while (schemas.next()) {
                 returnList.add(JdbcUtils.getValueForColumn(schemas, "TABLE_SCHEM", database));
             }
